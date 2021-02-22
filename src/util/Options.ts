@@ -11,7 +11,7 @@ export default class Options {
     body?: any;
     headers?: any;
     static fallbackOptions = {
-        "Authorization": "Bearer "+process.env.AUTH,
+        "Authorization": "Bearer "+ "mypassword",
         "Content-Type":"application/json",
         "Accepts":"application/json"
     }

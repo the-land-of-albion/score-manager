@@ -1,10 +1,6 @@
 export default class Game{
-    title: string;
-    _title: string;
     score: Record<string, number>;
     constructor(title: string, players: string[]){
-        this.title = title;
-        this._title = title.toLocaleLowerCase();
         this.score = {};
         
         players.forEach((p) => this.addPlayer(p));
@@ -13,5 +9,8 @@ export default class Game{
         if(player) {
             this.score[player] = score || 0;
         }
+    }
+    build(){
+        return this.score;
     }
 }

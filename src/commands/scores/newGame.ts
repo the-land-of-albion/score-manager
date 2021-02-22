@@ -17,17 +17,17 @@ class NewGame extends Command {
         { id: "player5", type: "string", default: "" },
         { id: "player6", type: "string", default: "" },
         { id: "player7", type: "string", default: "" },
-        { id: "player8", type: "string", default: "" },
       ],
     });
   }
 
   async exec(message: Message, args: Record<string, any>) {
-    const options = new Options("PUT", new Game(args.game, [args.player1, args.player2, args.player3]), {
+    const options = new Options("PUT", new Game(args.game, [message.member?.id, args.player1, args.player2, args.player3]).build(), {
         Authorization: "Bearer mypassword",
         "Content-Type": "application/json",
         Accepts: "application/json",
       }).transform();
+      console.log(options);
 
     const res: Response = await fetch(
       `http://localhost:3000/scores/${message.member?.id}/${args.game}`,
