@@ -2,7 +2,7 @@ import { Command } from "discord-akairo";
 import { Message } from "discord.js";
 import * as fetch from "node-fetch";
 import Game from "../../util/Game";
-import Options from "../../util/Options";
+import {optionsBuilder} from "../../util/newOptions";
 
 class NewGame extends Command {
   constructor() {
@@ -22,22 +22,16 @@ class NewGame extends Command {
   }
 
   async exec(message: Message, args: Record<string, any>) {
-    const options = new Options("PUT", new Game(args.game, [message.member?.id, args.player1, args.player2, args.player3]).build(), {
-        Authorization: "Bearer mypassword",
-        "Content-Type": "application/json",
-        Accepts: "application/json",
-      }).transform();
-      console.log(options);
-
-    const res: Response = await fetch(
-      `http://localhost:3000/scores/${message.member?.id}/${args.game}`,
-      options
-    );
-
-    if (!res.ok) {
-      return message.reply("☠️ Under attack, get cover!");
-    }
+    optionsBuilder.build(`http://localhost:3000/scores/${message.member?.id}/${args.game}`,"PUT", { body: new Game(args.game, [message.member?.id, args.player1, args.player2, args.player3]).build() })
+    .then((e: Response) => {
+      if(!e.ok){
+        return message.reply("☠️ Under attack, get cover!");
+      }
     return message.reply("🏴‍☠️ As you wish matey!");
+    }).catch((err) => {
+      return message.reply("☠️ Under attack, get cover!");
+    })
+
   }
 }
 

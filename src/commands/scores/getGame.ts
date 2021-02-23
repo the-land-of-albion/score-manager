@@ -13,7 +13,7 @@ class GetGame extends Command {
   }
 
   async exec(message: Message, args: Record<string, any>) {
-    const options = new Options("GET").transform();
+    const options = new Options("GET");
 
     const res: Response = await fetch(
       `http://localhost:3000/scores/${message.member?.id}/${args.game}`,

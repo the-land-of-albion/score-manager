@@ -1,8 +1,8 @@
-import myClient from "./client";
-import * as path from "path";
 import * as dotenv from "dotenv";
+import * as path from "path";
 const PDotEnv = path.join(path.dirname(__dirname), ".env");
-console.log(PDotEnv);
 dotenv.config({path:PDotEnv});
+console.log(PDotEnv);
+import myClient from "./client";
 
 myClient.start();
