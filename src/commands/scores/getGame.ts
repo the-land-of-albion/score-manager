@@ -28,12 +28,15 @@ class GetGame extends Command {
     }
 
     const players = Object.keys(data.score);
-    const parsedPlayers = players.map((p) => this.parseUsername(message.member?.id as string, p))
+    //const parsedPlayers = players.map((p) => this.parseUsername(message.member?.id as string, p))
+    const parsedPlayers = players;
     const scores = players.map((p) => data.score[p]);
     let i = scores.indexOf(Math.max(...scores));
     const winner = players[i];
+    console.log(parsedPlayers, scores, winner)
+    const winnerMsg = await this.getWinnerMessage(winner);
     return message.reply(
-      `🏴‍☠️ Arr, ${parsedPlayers[0]} has ${scores[0]}, an the other lad, he has ${scores[1]}!\nBack on the post, meh lad, can't keep playing \`${data.title}\` for ever.\n\n> ${await this.getWinnerMessage(winner)}`
+      `🏴‍☠️ Arr, ${parsedPlayers[0]} has ${scores[0]}, an the other lad, he has ${scores[1]}!\nBack on the post, meh lad, can't keep playing \`${data.title}\` for ever.${winnerMsg && `\n\n> ${winnerMsg}` || "" }`
     );
   }
 
@@ -49,7 +52,7 @@ class GetGame extends Command {
 
     const data = await response.json();
     console.log(data);
-    return data.bio;
+    return data.error ? "" : data.bio;
 
 
   }

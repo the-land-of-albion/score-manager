@@ -28,6 +28,7 @@ class WinGame extends Command {
     );
     const data = await res.json();
     if (!res.ok) {
+      console.log(res, data);
       return message.reply("☠️ Under attack, get cover!");
     }
     console.log(data);
