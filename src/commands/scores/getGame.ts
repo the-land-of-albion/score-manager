@@ -1,61 +1,65 @@
 import { Command } from "discord-akairo";
 import { Message } from "discord.js";
-import * as fetch from "node-fetch";
-import Game from "../../util/Game";
+import config from "../../config";
+import {fetch} from "../../config/fetch";
 import Options from "../../util/Options";
 
 class GetGame extends Command {
   constructor() {
     super("get", {
       aliases: ["get", "show"],
-      args: [{ id: "game", type: "string", default: "" }],
+      args: [{ id: "game", type: "string", prompt: {
+        start: "Which game?"
+      } }],
     });
   }
 
   async exec(message: Message, args: Record<string, any>) {
     const options = new Options("GET");
 
-    const res: Response = await fetch(
-      `http://localhost:3000/scores/${message.member?.id}/${args.game}`,
-      options
-    );
+    fetch(
+      `http://localhost:3000/user/${message.member?.id}/game/${args.game}/`, "GET"
+    )
+      .then((res) => {
+        if(!res.ok){
+          switch (res.status) {
+            case 404:
+            return message.reply("game not found")   
+            
+            default:
+              break;
+          }
+        }
+        return res.json()
+      })
+      .then((data) => {
 
-    const data = await res.json();
-    console.log(data);
+      const players = Object.keys(data.scores);
+      const scores = players.map((p) => data.scores[p])
+      const text = players.map((val, index) => {
+        return `${players[index]} has ${scores[index]}`
+      })
 
-    if (!res.ok) {
-      return message.reply("☠️ Under attack, get cover!");
-    }
+      const max = Math.max(...scores)
+      const maxIndex = scores.findIndex((e) => e == max)
+      const winnerUsername = players[maxIndex];
 
-    const players = Object.keys(data.score);
-    //const parsedPlayers = players.map((p) => this.parseUsername(message.member?.id as string, p))
-    const parsedPlayers = players;
-    const scores = players.map((p) => data.score[p]);
-    let i = scores.indexOf(Math.max(...scores));
-    const winner = players[i];
-    console.log(parsedPlayers, scores, winner)
-    const winnerMsg = await this.getWinnerMessage(winner);
-    return message.reply(
-      `🏴‍☠️ Arr, ${parsedPlayers[0]} has ${scores[0]}, an the other lad, he has ${scores[1]}!\nBack on the post, meh lad, can't keep playing \`${data.title}\` for ever.${winnerMsg && `\n\n> ${winnerMsg}` || "" }`
-    );
+      return fetch(`${config.api.prefix}/user/${winnerUsername}`,"GET", {headers: {"User-Agent": "none"}})
+        .then((res) => {
+          console.log(res);
+          if(!res.ok) return message.reply("whoops");
+          return res.json()})
+        .then((user) => {
+          const reply = user.bio ? [...text, `> ${user.bio}`] : [...text];
+          return message.reply(reply.join("\n"));
+        })
+        .catch((err)=> console.log(err));
+
+      });
+
   }
 
-  parseUsername(self: string, username: string){
-    // if(self === username) return "you";
-    if(typeof parseInt(username) == "number") return `<@${username}>`;
-    return username;
-  }
-  async getWinnerMessage(username: string){
-    console.log(username);
-    const options = new Options("GET");
-    const response = await fetch(`http://localhost:3000/auth/user/${username}`, options);
-
-    const data = await response.json();
-    console.log(data);
-    return data.error ? "" : data.bio;
-
-
-  }
+  
 }
 
 export default GetGame;

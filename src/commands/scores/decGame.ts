@@ -1,39 +1,65 @@
 import { Command } from "discord-akairo";
 import { Message } from "discord.js";
-import * as fetch from "node-fetch";
-import Game from "../../util/Game";
-import Options from "../../util/Options";
+import config from "../../config";
+import {fetch} from "../../config/fetch";
 
 class undoGame extends Command {
   constructor() {
     super("undo", {
       aliases: ["undo", "u"],
       args: [
-        { id: "game", type: "string", default: "" },
-        { id: "player", type: "string", default: "" },
+        { id: "game", type: "string", 
+      prompt: {
+        start: "Which game?"
+      }},
+        { id: "player", type: "string", prompt: {
+          start: "For which user?"
+        } },
       ],
     });
   }
 
   async exec(message: Message, args: Record<string, any>) {
-    const options = new Options("PATCH", null, {
-        Authorization: "Bearer mypassword",
-        "Content-Type": "application/json",
-        Accepts: "application/json",
-      }).transform();
+    fetch(
+      `${config.api.prefix}/user/${message.member?.id}/game/${args.game}/score/${args.player}/dec`,
+      "PATCH"
+    )
+      .then(async (res) => {
+        console.log(res);
+      if(!res.ok){
 
-    const res: Response = await fetch(
-      `http://localhost:3000/scores/undo/${message.member?.id}/${args.game}/${args.player}`,
-      options
-    );
-    const data = await res.json();
-    if (!res.ok) {
-      return message.reply("☠️ Under attack, get cover!");
-    }
-    console.log(data);
-     const players = Object.keys(data.score);
-     const scores = players.map((p) => data.score[p])
-    return message.reply(`🏴‍☠️ Arr, ${players[0]} has ${scores[0]}, an the other lad, he has ${scores[1]}!`);
+        switch (res.status) {
+          case 404:
+            return message.reply("Game not found")
+            break;
+          case 409:
+            return message.reply("user is not a participant")
+          default:
+            return message.reply("☠️ Under attack, get cover!");
+            break;
+        }
+      }
+      const data = await res.json();
+
+      const players = Object.keys(data.scores);
+      const scores = players.map((p) => data.scores[p])
+      const text = players.map((val, index) => {
+        return `${players[index]} has ${scores[index]}`
+      })
+
+      const max = Math.max(...scores)
+      const maxIndex = scores.findIndex((e) => e == max)
+      const winnerUsername = players[maxIndex];
+
+      return fetch(`${config.api.prefix}/user/${winnerUsername}`,"GET", {headers: {"User-Agent": "none"}})
+        .then((res) => res.json())
+        .then((user) => {
+          const reply = user.bio ? [...text, `> ${user.bio}`] : [...text];
+          return message.reply(reply.join("\n"));
+        })
+        .catch((err)=> console.log(err));
+
+      });
   }
 }
 

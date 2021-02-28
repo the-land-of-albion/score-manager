@@ -1,8 +1,7 @@
 import { Command } from "discord-akairo";
 import { Message } from "discord.js";
-import * as fetch from "node-fetch";
-import Game from "../../util/Game";
-import Options from "../../util/Options";
+import config from "../../config";
+import {fetch} from "../../config/fetch";
 
 class WinGame extends Command {
   constructor() {
@@ -16,25 +15,49 @@ class WinGame extends Command {
   }
 
   async exec(message: Message, args: Record<string, any>) {
-    const options = new Options("PATCH", null, {
-        Authorization: "Bearer mypassword",
-        "Content-Type": "application/json",
-        Accepts: "application/json",
-      }).transform();
+    fetch(
+      `${config.api.prefix}/user/${message.member?.id}/game/${args.game}/score/${args.player}/inc`,
+      "PATCH"
+    )
+      .then(async (res) => {
+      if(!res.ok){
+        console.log(res);
 
-    const res: Response = await fetch(
-      `http://localhost:3000/scores/${message.member?.id}/${args.game}/${args.player}`,
-      options
-    );
-    const data = await res.json();
-    if (!res.ok) {
-      console.log(res, data);
-      return message.reply("☠️ Under attack, get cover!");
-    }
-    console.log(data);
-     const players = Object.keys(data.score);
-     const scores = players.map((p) => data.score[p])
-    return message.reply(`🏴‍☠️ Arr, ${players[0]} has ${scores[0]}, an the other lad, he has ${scores[1]}!`);
+        switch (res.status) {
+          case 404:
+            return message.reply("Game not found")
+            break;
+          case 409:
+            return message.reply("user is not participant")
+          default:
+            return message.reply("☠️ Under attack, get cover!");
+            break;
+        }
+      }
+      const data = await res.json();
+
+      const players = Object.keys(data.scores);
+      const scores = players.map((p) => data.scores[p])
+      const text = players.map((val, index) => {
+        return `${players[index]} has ${scores[index]}`
+      })
+
+      const max = Math.max(...scores)
+      const maxIndex = scores.findIndex((e) => e == max)
+      const winnerUsername = players[maxIndex];
+
+      return fetch(`${config.api.prefix}/user/${winnerUsername}`,"GET", {headers: {"User-Agent": "none"}})
+        .then((res) => {
+          console.log(res);
+          if(!res.ok) return message.reply("whoops");
+          return res.json()})
+        .then((user) => {
+          const reply = user.bio ? [...text, `> ${user.bio}`] : [...text];
+          return message.reply(reply.join("\n"));
+        })
+        .catch((err)=> console.log(err));
+
+      });
   }
 }
 

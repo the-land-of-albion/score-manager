@@ -1,8 +1,7 @@
 import { Command } from "discord-akairo";
 import { Message } from "discord.js";
-import * as fetch from "node-fetch";
+import {fetch} from "../../config/fetch";
 import Game from "../../util/Game";
-import {optionsBuilder} from "../../util/newOptions";
 import Options from "../../util/Options";
 
 class NewGame extends Command {
@@ -10,34 +9,27 @@ class NewGame extends Command {
     super("new", {
       aliases: ["new", "n"],
       args: [
-        { id: "game", type: "string", default: "" },
-        { id: "player1", type: "string", default: "" },
-        { id: "player2", type: "string", default: "" },
-        { id: "player3", type: "string", default: "" },
-        { id: "player4", type: "string", default: "" },
-        { id: "player5", type: "string", default: "" },
-        { id: "player6", type: "string", default: "" },
-        { id: "player7", type: "string", default: "" },
+        { id: "game", type: "string", prompt: {
+          start: "We need a name to label what it is your tracking?",
+          ended: "dont work",
+          timeout: "Ai, were we a wee bit too slow huh?",
+          cancel: "Respect that lad. Talk to ya'r later.",
+          retry: "Let's try this again, we just need a name."
+        } },
       ],
     });
   }
 
   async exec(message: Message, args: Record<string, any>) {
-    const members = [args.player1, args.player2, args.player3, args.player4];
-    console.log(members, args.game);
-    const game = new Game(args.game, members).build();
-    console.log(game);
-    const options = new Options("PUT", game).transform();
-    fetch(`http://localhost:3000/scores/${message.member?.id}/${args.game}`,options)
-    .then((e: Response) => {
-      if(!e.ok){
-        console.log("rip")
-        return message.reply("☠️ Under attack, get cover!");
+    const game = new Game(args.game, []).build();
+    fetch(`http://localhost:3000/user/${message.member?.id}/game`, "POST", {body: {title: args.game, _title: args.game.toLowerCase()}})
+    .then(async (e: Response) => {
+      if(e.status == 409){
+        return message.reply("☠️ Ya'r know, ya'r have a game with that name!");
       }
-    return message.reply("🏴‍☠️ As you wish matey!");
+    return message.reply(`🏴‍☠️ Ai, ya'r now tracking ${args.game}.`);
     }).catch((err) => {
-      console.log(err);
-      return message.reply("☠️ Under attack, get cover!");
+      return message.reply("☠️ Ship's sinking!");
     })
 
   }

@@ -4,5 +4,8 @@ export default {
     bot: {
         prefix,
         name: "Captain. Scoreboard"
+    },
+    api: {
+        prefix: "http://localhost:3000"
     }
 }
