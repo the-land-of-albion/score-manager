@@ -1,24 +1,45 @@
-import * as path from "path";
-import * as fs from "fs";
+import { Category, Command } from "discord-akairo";
+import { MessageEmbed } from "discord.js";
 
-const _path = path.join(path.dirname(__dirname),"commands");
-
-
-export function getCategories(){
-    return fs.readdirSync(_path);
+export function createHelpEmbed(){
+    const categoriesEmbed = new MessageEmbed()
+      .setColor("#FC2C26")
+      .setTitle("Command categories.")
+      .setDescription("Try doing **!sb help game**")
+      .setTimestamp()
+      .setImage(
+        "https://raw.githubusercontent.com/BotHaven/static/main/img/cpt_scoreboard.png"
+      )
+      .setFooter("For more info on seperate commands do `!sb help <category>`")
+      .addField("1️⃣ game", "> Game related commands, creating, deleting,...")
+      .addField(
+        "2️⃣ score",
+        "> Score related commands, incrementing and decrementing,..."
+      )
+      .addField("3️⃣ general", "> General commands ie: ping, help,...");
+      return categoriesEmbed
 }
 
-export function getByCategory(category: string): Map<string, any>{
-    const categories = getCategories();
-    if(!categories.includes(category)) return new Map()
-
-    const categoryPath = path.join(_path, category);
-    const commandFilesByCategory = fs.readdirSync(categoryPath);
-    const commands = new Map<string, any>();
-    commandFilesByCategory.forEach(async (value) => {
-        const name = path.basename(value);
-        const command = import(path.join(categoryPath, value));
-        commands.set(name, command);
-    })
-    return commands as Map<string, any>;
-}
+export function createCategoryEmbed(
+      category: Category<string, Command> | undefined
+    ) {
+      console.log(category?.id);
+      if (!category) return new MessageEmbed();
+      const fields = category.map((cat) => ({
+        name: cat.id || "nothing",
+        value: `> ${
+          cat.description || "nothing"
+        }\n Aliases: **${cat.aliases.join(", ")}**`,
+      }));
+      const embed = new MessageEmbed()
+        .setColor("#FC2C26")
+        .setTitle(`Category: ${category.id}`)
+        .setDescription("Game related commands, creating, deleting,...")
+        .setAuthor(
+          "Arr matey!",
+          "https://raw.githubusercontent.com/BotHaven/static/main/img/cpt_scoreboard.png"
+        )
+        .setTimestamp()
+        .addFields(fields);
+      return embed;
+    }

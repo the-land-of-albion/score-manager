@@ -4,6 +4,7 @@ import {
   InhibitorHandler,
   ListenerHandler,
 } from "discord-akairo";
+import { GuildEmoji } from "discord.js";
 import * as path from "path";
 import IMyClient from "./client.interface";
 import config from "./config";

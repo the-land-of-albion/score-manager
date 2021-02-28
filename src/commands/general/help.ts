@@ -1,9 +1,12 @@
-import { Command } from "discord-akairo";
+import { Category, Command } from "discord-akairo";
 import { MessageEmbed } from "discord.js";
+import { User } from "discord.js";
+import { MessageReaction } from "discord.js";
+import { ReactionEmoji } from "discord.js";
 import { Message } from "discord.js";
 import * as fs from "fs";
 import * as path from "path";
-import { getByCategory, getCategories } from "../../config/help";
+import { createCategoryEmbed, createHelpEmbed } from "../../config/help";
 
 class Help extends Command {
   constructor() {
@@ -12,39 +15,48 @@ class Help extends Command {
       channel: "guild",
       category: "general",
       description: "Lists general command info.",
-      args: [{
-        id:"category", default: "default"
-      }]
+      args: [
+        {
+          id: "category",
+          default: "default",
+        },
+      ],
     });
   }
 
   async exec(message: Message, args: Record<string, any>) {
     const commandsByCategory = this.handler.categories.get(args.category);
     // const possibleCateogires = this.handler.categories.map((category) => category.id)
-    const categoryEmbed = new MessageEmbed()
-      .setColor("#FC2C26")
-      .setTitle("Command categories.")
-      .setDescription("Try doing **\!sb help game**")
-      .setTimestamp()
-      .setImage("https://raw.githubusercontent.com/BotHaven/static/main/img/cpt_scoreboard.png")
-      .setFooter("For more info on seperate commands do \`!sb help <category>\`")
-      .addField("game", "> Game related commands, creating, deleting,...")
-      .addField("general", "> General commands ie: ping, help,...")
-      .addField("score", "> Score related commands, incrementing and decrementing,...")
-    if(!commandsByCategory) return message.reply(categoryEmbed);
-    const fields = commandsByCategory?.map((cat) => ({name: cat.id || "nothing", value: `> ${cat.description || "nothing"}\n Aliases: **${cat.aliases.join(", ")}**`}));
-    const embed =  new MessageEmbed()
-    .setColor("#FC2C26")
-    .setTitle(`Category: ${args.category}`)
-    .setDescription("Game related commands, creating, deleting,...")
-    .setAuthor("Arr matey!","https://raw.githubusercontent.com/BotHaven/static/main/img/cpt_scoreboard.png")
-    .setTimestamp()
-    .addFields(fields)
+    const categoryEmbed = createHelpEmbed();
+    if (!commandsByCategory) {
+      return message.reply(categoryEmbed).then((sentMessage) => {
+        // sentMessage.react("🅰️");
+        sentMessage.react("1️⃣");
+        sentMessage.react("2️⃣");
+        sentMessage.react("3️⃣");
 
-    return message.reply(embed);
+        return sentMessage
+          .awaitReactions(
+            (reaction: any, user: User) => user.id == message.author.id,
+            { max: 1, time: 30000  }
+          )
+          .then((collected) => {
+            if (collected.first()?.emoji.name == "1️⃣") {
+              sentMessage.edit(createCategoryEmbed(this.handler.categories.get("game")));
+            } else if(collected.first()?.emoji.name == "2️⃣"){
+              sentMessage.edit(createCategoryEmbed(this.handler.categories.get("score")));
+            } else if (collected.first()?.emoji.name == "3️⃣") {
+              sentMessage.edit(createCategoryEmbed(this.handler.categories.get("general")));
+            }
+            return
+          })
+          .catch(() => message.reply("something went wrong"));
+      });
+    }
+    
+
+    return message.reply(createCategoryEmbed(commandsByCategory));
   }
-
-  
 }
 
 export default Help;
