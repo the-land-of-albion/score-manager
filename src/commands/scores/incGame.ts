@@ -5,7 +5,7 @@ import {fetch} from "../../config/fetch";
 
 class WinGame extends Command {
   constructor() {
-    super("win", {
+    super("increment score", {
       aliases: ["win", "won"],
       channel: "guild",
       category: "score",

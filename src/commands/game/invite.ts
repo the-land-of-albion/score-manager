@@ -6,7 +6,7 @@ import {fetch} from "../../config/fetch";
 
 class inviteUser extends Command {
   constructor() {
-    super("invite user to game", {
+    super("invite user", {
       aliases: ["invite"],
       channel: "guild",
       category: "game",

@@ -5,7 +5,7 @@ import {fetch} from "../../config/fetch";
 
 class listGames extends Command {
   constructor() {
-    super("list", {
+    super("list games", {
       aliases: ["list"],
       channel: "guild",
       category: "game",

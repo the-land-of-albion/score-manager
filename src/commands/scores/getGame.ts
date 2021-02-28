@@ -6,7 +6,7 @@ import Options from "../../util/Options";
 
 class GetGame extends Command {
   constructor() {
-    super("get", {
+    super("get game", {
       aliases: ["get", "show"],
       channel: "guild",
       category: "game",

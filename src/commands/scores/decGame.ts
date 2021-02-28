@@ -5,7 +5,7 @@ import {fetch} from "../../config/fetch";
 
 class undoGame extends Command {
   constructor() {
-    super("undo", {
+    super("decrement score", {
       aliases: ["undo", "u"],
       channel: "guild",
       category: "score",
