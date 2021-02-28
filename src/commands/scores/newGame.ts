@@ -8,6 +8,9 @@ class NewGame extends Command {
   constructor() {
     super("new", {
       aliases: ["new", "n"],
+      channel: "guild",
+      category: "game",
+      description: "Creates new game.",
       args: [
         { id: "game", type: "string", prompt: {
           start: "We need a name to label what it is your tracking?",

@@ -7,6 +7,9 @@ class listGames extends Command {
   constructor() {
     super("list", {
       aliases: ["list"],
+      channel: "guild",
+      category: "game",
+      description: "Lists all current games."
     });
   }
 

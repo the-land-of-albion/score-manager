@@ -7,6 +7,9 @@ class undoGame extends Command {
   constructor() {
     super("undo", {
       aliases: ["undo", "u"],
+      channel: "guild",
+      category: "score",
+      description: "Decrement player's score.",
       args: [
         { id: "game", type: "string", 
       prompt: {

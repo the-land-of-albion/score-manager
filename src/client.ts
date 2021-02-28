@@ -44,6 +44,7 @@ class MyClient extends AkairoClient implements IMyClient {
     this.listenerHandler.loadAll();
 
     this.commandHandler.loadAll();
+
   }
 }
 

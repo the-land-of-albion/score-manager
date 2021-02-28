@@ -8,6 +8,9 @@ class inviteUser extends Command {
   constructor() {
     super("invite user to game", {
       aliases: ["invite"],
+      channel: "guild",
+      category: "game",
+      description: "Invites user to game.",
       args: [
         { id: "game", type: "string", 
       prompt: {

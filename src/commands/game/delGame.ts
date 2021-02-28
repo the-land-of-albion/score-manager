@@ -7,6 +7,9 @@ class delGame extends Command {
   constructor() {
     super("delete game", {
       aliases: ["delete", "del", "remove"],
+      channel: "guild",
+      category: "game",
+      description: "Deletes game.",
       args: [
         { id: "game", type: "string", 
       prompt: {

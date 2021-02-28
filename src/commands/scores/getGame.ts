@@ -8,6 +8,9 @@ class GetGame extends Command {
   constructor() {
     super("get", {
       aliases: ["get", "show"],
+      channel: "guild",
+      category: "game",
+      description: "Get game stats.",
       args: [{ id: "game", type: "string", prompt: {
         start: "Which game?"
       } }],

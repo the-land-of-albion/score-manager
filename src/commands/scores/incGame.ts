@@ -7,6 +7,9 @@ class WinGame extends Command {
   constructor() {
     super("win", {
       aliases: ["win", "won"],
+      channel: "guild",
+      category: "score",
+      description: "Increment player's score",
       args: [
         { id: "game", type: "string", prompt: {
           start: "Which game?"
