@@ -8,8 +8,12 @@ class WinGame extends Command {
     super("win", {
       aliases: ["win", "won"],
       args: [
-        { id: "game", type: "string", default: "" },
-        { id: "player", type: "string", default: "" },
+        { id: "game", type: "string", prompt: {
+          start: "Which game?"
+        } },
+        { id: "player", type: "string", prompt: {
+          start: "Which user?"
+        } },
       ],
     });
   }

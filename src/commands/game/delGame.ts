@@ -37,7 +37,7 @@ class delGame extends Command {
         }
       }
       
-      return message.reply(`Delted ${args.game}. Hopefully.`)
+      return message.reply(`Deleted ${args.game}. Hopefully.`)
       });
   }
 }
