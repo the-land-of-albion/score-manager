@@ -12,7 +12,6 @@ class Help extends Command {
   constructor() {
     super("help", {
       aliases: ["help"],
-      channel: "guild",
       category: "general",
       description: "Lists general command info.",
       args: [

@@ -1,5 +1,6 @@
 import { Category, Command } from "discord-akairo";
 import { MessageEmbed } from "discord.js";
+import config from ".";
 
 export function createHelpEmbed(){
     const categoriesEmbed = new MessageEmbed()
@@ -29,7 +30,7 @@ export function createCategoryEmbed(
         name: cat.id || "nothing",
         value: `> ${
           cat.description || "nothing"
-        }\n Aliases: **${cat.aliases.join(", ")}**`,
+        }\n Aliases: **${cat.aliases.map((val)=>`${config.bot.prefix} ${val}`).join(", ")}**`,
       }));
       const embed = new MessageEmbed()
         .setColor("#FC2C26")
