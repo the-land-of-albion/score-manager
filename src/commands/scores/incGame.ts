@@ -2,6 +2,7 @@ import { Command } from "discord-akairo";
 import { Message } from "discord.js";
 import config from "../../config";
 import {fetch} from "../../config/fetch";
+import { promptGame } from "../../config/prompts/game";
 
 class WinGame extends Command {
   constructor() {
@@ -12,7 +13,7 @@ class WinGame extends Command {
       description: "Increment player's score",
       args: [
         { id: "game", type: "string", prompt: {
-          start: "Which game?"
+          start: promptGame
         } },
         { id: "player", type: "string", prompt: {
           start: "Which user?"

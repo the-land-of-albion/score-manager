@@ -2,6 +2,7 @@ import { Command } from "discord-akairo";
 import { Message } from "discord.js";
 import config from "../../config";
 import {fetch} from "../../config/fetch";
+import { promptGame } from "../../config/prompts/game";
 import Options from "../../util/Options";
 
 class GetGame extends Command {
@@ -12,7 +13,7 @@ class GetGame extends Command {
       category: "game",
       description: "Get game stats.",
       args: [{ id: "game", type: "string", prompt: {
-        start: "Which game?"
+        start: promptGame
       } }],
     });
   }

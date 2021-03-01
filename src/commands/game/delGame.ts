@@ -2,6 +2,7 @@ import { Command } from "discord-akairo";
 import { Message } from "discord.js";
 import config from "../../config";
 import {fetch} from "../../config/fetch";
+import { promptGame } from "../../config/prompts/game";
 
 class delGame extends Command {
   constructor() {
@@ -13,7 +14,7 @@ class delGame extends Command {
       args: [
         { id: "game", type: "string", 
       prompt: {
-        start: "Which game?"
+        start: promptGame
       }}
       ],
     });

@@ -3,6 +3,7 @@ import { GuildMember } from "discord.js";
 import { Message } from "discord.js";
 import config from "../../config";
 import {fetch} from "../../config/fetch";
+import { promptGame } from "../../config/prompts/game";
 
 class inviteUser extends Command {
   constructor() {
@@ -14,7 +15,7 @@ class inviteUser extends Command {
       args: [
         { id: "game", type: "string", 
       prompt: {
-        start: "Which game?",
+        start: promptGame,
         timeout: "Oops, thausert's a timeout"
       }},
       {id: "user", type: "string", prompt: {
