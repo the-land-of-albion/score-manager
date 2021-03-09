@@ -1,4 +1,5 @@
 import { Listener } from 'discord-akairo';
+import { Message } from 'discord.js';
 
 class ReadyListener extends Listener {
     constructor() {
@@ -10,6 +11,7 @@ class ReadyListener extends Listener {
 
     exec() {
         console.log('I\'m ready!');
+
     }
 }
 
