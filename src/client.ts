@@ -16,10 +16,10 @@ class MyClient extends AkairoClient implements IMyClient {
     super(
       {
         ownerID: "384079582267047937", // or ['123992700587343872', '86890631690977280']
-        presence: {activity: {name: "for !sb help", type: "LISTENING"}, status: "online"}
       },
       {
         disableMentions: "everyone",
+        presence: {activity: {name: "!sb help", type: "LISTENING"}, status: "online"}
       }
     );
     this.commandHandler = new CommandHandler(this, {
