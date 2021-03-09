@@ -4,10 +4,10 @@ import {
   InhibitorHandler,
   ListenerHandler,
 } from "discord-akairo";
-import { GuildEmoji } from "discord.js";
 import * as path from "path";
 import IMyClient from "./client.interface";
 import config from "./config";
+import { fetch } from "./config/fetch";
 class MyClient extends AkairoClient implements IMyClient {
   commandHandler: CommandHandler;
   listenerHandler: ListenerHandler;
@@ -50,3 +50,11 @@ class MyClient extends AkairoClient implements IMyClient {
 }
 
 export default new MyClient();
+
+export const cachedUsers = new Map<string, {username: string}>();
+(async function init(){
+  const res = await fetch(`${config.api.prefix}/user`, "GET")
+  const users = await res.json();
+  users.forEach((user) => cachedUsers.set(user.oauth_id, user)); 
+  console.log(cachedUsers);
+})();
