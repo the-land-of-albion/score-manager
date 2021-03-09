@@ -1,4 +1,5 @@
 import { Command } from "discord-akairo";
+import { MessageEmbed } from "discord.js";
 import { Message } from "discord.js";
 import config from "../../config";
 import {fetch} from "../../config/fetch";
@@ -58,8 +59,16 @@ class undoGame extends Command {
       return fetch(`${config.api.prefix}/user/${winnerUsername}`,"GET", {headers: {"User-Agent": "none"}})
         .then((res) => res.json())
         .then((user) => {
-          const reply = user.bio ? [...text, `> ${user.bio}`] : [...text];
-          return message.reply(reply.join("\n"));
+          const fields = Object.entries(data.scores).map(([username, score])=>({name: username, value: score}))
+          const GameCard = new MessageEmbed()
+            .setColor("RANDOM")
+            .setThumbnail(config.bot.iconURL)
+            .setFooter(`Requested by ${message.member?.nickname || message.author.username}`, message.member?.user.displayAvatarURL({dynamic: true}))
+            .setTitle(args.game)
+            .addFields(fields)
+            .setDescription(`> ${user.bio} ~ ${winnerUsername}`)
+          
+            return message.reply(GameCard);
         })
         .catch((err)=> console.log(err));
 
