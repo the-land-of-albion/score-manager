@@ -14,7 +14,6 @@ class BlacklistInhibitor extends Inhibitor {
   async exec(message: Message) {
     /* Validating Cache */
     if (cachedUsers.has(message.member?.id as string)) {
-      console.log("in cache");
       return false;
     }
 
@@ -23,7 +22,6 @@ class BlacklistInhibitor extends Inhibitor {
         const res = await fetch(`${config.api.prefix}/user/${message.member?.id}`, "GET");
         if(!res.ok) {
             message.reply("Please create an account first.");
-            console.log("prior")
             return true;
         }
         /* Add to cache */
@@ -34,8 +32,6 @@ class BlacklistInhibitor extends Inhibitor {
     } catch(err){
         return true;
     }
-
-    
   }
 }
 
