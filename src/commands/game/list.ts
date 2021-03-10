@@ -3,6 +3,7 @@ import { MessageEmbed } from "discord.js";
 import { Message } from "discord.js";
 import config from "../../config";
 import { fetch } from "../../config/fetch";
+import   {cachedUsers } from "../../client";
 
 class listGames extends Command {
   constructor() {
@@ -50,7 +51,8 @@ class listGames extends Command {
         }));
         const ratio = () => {
           const winsAndLosses = data.map((game) => {
-            const me = Object.keys(game.scores)[0];
+            const me = cachedUsers.get(message.member?.id as string)?.username;
+            if(!me) return message.reply("rip");
             const winnerUsername = getWinner(game.scores);
             return me === winnerUsername ? 1 : 0;
           });
